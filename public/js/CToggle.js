@@ -85,7 +85,7 @@ function CToggle(iXPos, iYPos, oSprite, bActive, oParentContainer) {
     _oButton.scaleX = 0.7;
     _oButton.scaleY = 0.7;
 
-    playSound('click', 1, false);
+    // playSound('click', 1, false);
 
     _bActive = !_bActive;
     _oButton.gotoAndStop('state_' + _bActive);

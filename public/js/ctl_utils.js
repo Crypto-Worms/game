@@ -124,12 +124,6 @@ function sizeHandler() {
   var h;
   var iOS = navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false;
 
-  if (platform.name.toLowerCase() === 'safari') {
-    h = getIOSWindowHeight();
-  } else {
-    h = getSize('Height');
-  }
-
   var w = getSize('Width');
 
   _checkOrientation(w, h);
@@ -184,9 +178,6 @@ function sizeHandler() {
   if (s_oInterface !== null) {
     s_oInterface.refreshButtonPos(s_iOffsetX, s_iOffsetY);
   }
-  if (s_oMenu !== null) {
-    s_oMenu.refreshButtonPos(s_iOffsetX, s_iOffsetY);
-  }
 
   $('#canvas').css('width', destW + 'px');
   $('#canvas').css('height', destH + 'px');
@@ -199,8 +190,6 @@ function sizeHandler() {
   }
 
   $('#canvas').css('left', fOffsetX + 'px');
-
-  fullscreenHandler();
 }
 
 function _checkOrientation(iWidth, iHeight) {
@@ -523,42 +512,6 @@ NoClickDelay.prototype = {
   }
 })();
 
-function playSound(szSound, iVolume, bLoop) {
-  if (DISABLE_SOUND_MOBILE === false || s_bMobile === false) {
-    s_aSounds[szSound].play();
-    s_aSounds[szSound].volume(iVolume);
-
-    s_aSounds[szSound].loop(bLoop);
-
-    return s_aSounds[szSound];
-  }
-  return null;
-}
-
-function stopSound(szSound) {
-  if (DISABLE_SOUND_MOBILE === false || s_bMobile === false) {
-    s_aSounds[szSound].stop();
-  }
-}
-
-function setVolume(szSound, iVolume) {
-  if (DISABLE_SOUND_MOBILE === false || s_bMobile === false) {
-    s_aSounds[szSound].volume(iVolume);
-  }
-}
-
-function setMute(szSound, bMute) {
-  if (DISABLE_SOUND_MOBILE === false || s_bMobile === false) {
-    s_aSounds[szSound].mute(bMute);
-  }
-}
-
-function playExistingSound(szSound) {
-  if (DISABLE_SOUND_MOBILE === false || s_bMobile === false) {
-    s_aSounds[szSound].play();
-  }
-}
-
 function ctlArcadeResume() {
   if (s_oMain !== null) {
     s_oMain.startUpdate();
@@ -606,34 +559,4 @@ function reflectVectorV2(v, n) {
   var dotP = dotProductV2(v, n);
   v.set(v.getX() - 2 * dotP * n.getX(), v.getY() - 2 * dotP * n.getY());
   return v;
-}
-
-function fullscreenHandler() {
-  if (!ENABLE_FULLSCREEN || !screenfull.enabled) {
-    return;
-  }
-
-  s_bFullscreen = screenfull.isFullscreen;
-
-  if (s_oInterface !== null) {
-    s_oInterface.resetFullscreenBut();
-  }
-
-  if (s_oMenu !== null) {
-    s_oMenu.resetFullscreenBut();
-  }
-}
-
-if (screenfull.enabled) {
-  screenfull.on('change', function () {
-    s_bFullscreen = screenfull.isFullscreen;
-
-    if (s_oInterface !== null) {
-      s_oInterface.resetFullscreenBut();
-    }
-
-    if (s_oMenu !== null) {
-      s_oMenu.resetFullscreenBut();
-    }
-  });
 }

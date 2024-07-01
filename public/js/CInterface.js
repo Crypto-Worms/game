@@ -1,26 +1,18 @@
 function CInterface() {
-  var _pStartPosAudio;
   var _pStartPosExit;
   var _pStartPosScore;
   var _pStartPosBest;
   var _pStartPosPause;
   var _pStartPosArrowLeft;
   var _pStartPosArrowRight;
-  var _pStartPosFullscreen;
-
   var _oButExit;
   var _oButPause;
   var _oScoreText;
   var _oBestScoreText;
-  var _oHelpPanel;
-  var _oAudioToggle;
   var _oArrowLeft;
   var _oArrowRight;
   var _oPause;
   var _oEndPanel;
-  // var _oButFullscreen;
-  // var _fRequestFullScreen = null;
-  // var _fCancelFullScreen = null;
 
   this._init = function () {
     _pStartPosBest = { x: 20, y: 30 };
@@ -28,18 +20,6 @@ function CInterface() {
     _oBestScoreText.x = _pStartPosBest.x;
     _oBestScoreText.y = _pStartPosBest.y;
     _oBestScoreText.textAlign = 'left';
-
-    // _pStartPosScore = { x: 20, y: 80 };
-    // _oScoreText = new createjs.Text(TEXT_SCORE + ': 0', '24px ' + FONT_GAME, '#ffffff');
-    // _oScoreText.x = _pStartPosScore.x;
-    // _oScoreText.y = _pStartPosScore.y;
-    // _oScoreText.textAlign = 'left';
-    // _oScoreText.regY = _oScoreText.getBounds().height * 0.5;
-    // _oScoreText.regx = _oScoreText.getBounds().width * 0.5;
-    // s_oStage.addChild(_oScoreText);
-
-    // _oBestScoreText.regX = _oBestScoreText.getBounds().width * 0.5;
-    // _oBestScoreText.regY = _oBestScoreText.getBounds().height * 0.5;
     s_oStage.addChild(_oBestScoreText);
 
     var oSprite = s_oSpriteLibrary.getSprite('but_exit');
@@ -51,96 +31,14 @@ function CInterface() {
     _pStartPosPause = { x: _pStartPosExit.x, y: _pStartPosExit.y + oSprite.height };
     _oButPause = new CGfxButton(_pStartPosPause.x, _pStartPosPause.y, oSprite, s_oStage);
     _oButPause.addEventListener(ON_MOUSE_UP, this._onPause, this);
-
-    if (DISABLE_SOUND_MOBILE === false || s_bMobile === false) {
-      var oSprite = s_oSpriteLibrary.getSprite('audio_icon');
-      _pStartPosAudio = { x: _pStartPosPause.x, y: _pStartPosPause.y + oSprite.height };
-      _oAudioToggle = new CToggle(
-        _pStartPosAudio.x,
-        _pStartPosAudio.y,
-        oSprite,
-        s_bAudioActive,
-        s_oStage
-      );
-      _oAudioToggle.addEventListener(ON_MOUSE_UP, this._onAudioToggle, this);
-
-      // _pStartPosFullscreen = {x:_pStartPosAudio.x - oSprite.width/2 - 20,y:_pStartPosPause.y};
-    } else {
-      // _pStartPosFullscreen = {x: _pStartPosPause.x - oSprite.height - 20, y: _pStartPosExit.y};
-    }
-
-    // var doc = window.document;
-    // var docEl = doc.documentElement;
-    // _fRequestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-    // _fCancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-    // if(ENABLE_FULLSCREEN === false){
-    //     _fRequestFullScreen = false;
-    // }
-
-    // if (_fRequestFullScreen && screenfull.enabled){
-    //     oSprite = s_oSpriteLibrary.getSprite('but_fullscreen');
-
-    //     _oButFullscreen = new CToggle(_pStartPosFullscreen.x,_pStartPosFullscreen.y,oSprite,s_bFullscreen,s_oStage);
-    //     _oButFullscreen.addEventListener(ON_MOUSE_UP, this._onFullscreenRelease, this);
-    // }
-
-    if (s_bMobile) {
-      // _pStartPosArrowLeft = {
-      //   x: CANVAS_WIDTH / 2 - 100,
-      //   y: CANVAS_HEIGHT - 150,
-      // };
-      // var oSpriteArrow = s_oSpriteLibrary.getSprite('arrow');
-      // _oArrowLeft = createBitmap(oSpriteArrow);
-      // _oArrowLeft.skewX = 0;
-      // _oArrowLeft.skewY = 180;
-      // _oArrowLeft.regX = oSpriteArrow.width * 0.5;
-      // _oArrowLeft.regY = oSpriteArrow.height * 0.5;
-      // _oArrowLeft.x = _pStartPosArrowLeft.x;
-      // _oArrowLeft.y = _pStartPosArrowLeft.y;
-      // _oArrowLeft.scaleX = 0.7;
-      // _oArrowLeft.scaleY = 0.7;
-      // s_oStage.addChild(_oArrowLeft);
-      // _pStartPosArrowRight = {
-      //   x: CANVAS_WIDTH / 2 + 100,
-      //   y: CANVAS_HEIGHT - 150,
-      // };
-      // _oArrowRight = createBitmap(oSpriteArrow);
-      // _oArrowRight.regX = oSpriteArrow.width * 0.5;
-      // _oArrowRight.regY = oSpriteArrow.height * 0.5;
-      // _oArrowRight.scaleX = 0.7;
-      // _oArrowRight.scaleY = 0.7;
-      // _oArrowRight.x = _pStartPosArrowRight.x;
-      // _oArrowRight.y = _pStartPosArrowRight.y;
-      // s_oStage.addChild(_oArrowRight);
-    }
-
-    // _oHelpPanel = new CHelpPanel(0, 0, s_oSpriteLibrary.getSprite('bg_help'));
-
-    // this.refreshButtonPos(s_iOffsetX, s_iOffsetY);
   };
 
   this.refreshButtonPos = function (iNewX, iNewY) {
     _oButExit.setPosition(_pStartPosExit.x - iNewX, iNewY + _pStartPosExit.y);
     _oButPause.setPosition(_pStartPosPause.x - iNewX, iNewY + _pStartPosPause.y);
-    if (DISABLE_SOUND_MOBILE === false || s_bMobile === false) {
-      _oAudioToggle.setPosition(_pStartPosAudio.x - iNewX, iNewY + _pStartPosAudio.y);
-    }
-
-    // if (_fRequestFullScreen && screenfull.enabled){
-    //     _oButFullscreen.setPosition(_pStartPosFullscreen.x - iNewX,_pStartPosFullscreen.y + iNewY);
-    // }
 
     _oBestScoreText.x = _pStartPosBest.x + iNewX;
     _oBestScoreText.y = _pStartPosBest.y + iNewY;
-    if (s_bMobile) {
-      _oArrowLeft.x = _pStartPosArrowLeft.x + iNewX;
-      _oArrowLeft.y = _pStartPosArrowLeft.y - iNewY;
-
-      _oArrowRight.x = _pStartPosArrowRight.x - iNewX;
-      _oArrowRight.y = _pStartPosArrowRight.y - iNewY;
-    }
-    _oScoreText.y = _pStartPosScore.y + iNewY;
 
     s_oGame.updateScrollLimit(iNewX, iNewY);
   };
@@ -149,23 +47,8 @@ function CInterface() {
     _oButExit.unload();
     _oButExit = null;
 
-    // _oHelpPanel.unload();
-
-    if (DISABLE_SOUND_MOBILE === false || s_bMobile === false) {
-      _oAudioToggle.unload();
-      _oAudioToggle = null;
-    }
-
-    // if (_fRequestFullScreen && screenfull.enabled){
-    //     _oButFullscreen.unload();
-    // }
-
     s_oInterface = null;
   };
-
-  // this.refreshScore = function (iScore) {
-  //   _oScoreText.text = TEXT_SCORE + ': ' + iScore;
-  // };
 
   this.refreshBestScore = function (iScore, bAnim) {
     _oBestScoreText.text = TEXT_BEST_SCORE + ': ' + iScore;
@@ -197,35 +80,10 @@ function CInterface() {
     _oPause = null;
   };
 
-  this.onExitFromHelp = function () {
-    // _oHelpPanel.unload();
-  };
-
-  this._onAudioToggle = function () {
-    Howler.mute(s_bAudioActive);
-    s_bAudioActive = !s_bAudioActive;
-  };
-
   this._onExit = function () {
     var _oAreYouSure = new CAreYouSurePanel(s_oStage);
     _oAreYouSure.show();
   };
-
-  // this.resetFullscreenBut = function(){
-  // if (_fRequestFullScreen && screenfull.enabled){
-  // 	_oButFullscreen.setActive(s_bFullscreen);
-  // }
-  // };
-
-  //   this._onFullscreenRelease = function () {
-  //     if (s_bFullscreen) {
-  //       _fCancelFullScreen.call(window.document);
-  //     } else {
-  //       _fRequestFullScreen.call(window.document.documentElement);
-  //     }
-
-  //     sizeHandler();
-  //   };
 
   s_oInterface = this;
 

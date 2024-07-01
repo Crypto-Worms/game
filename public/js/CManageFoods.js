@@ -19,7 +19,9 @@ function CManageFoods(oParentContainer) {
   };
 
   this.foodsInSections = function () {
-    var iFoodsForSection = Math.floor(MAX_FOODS_INSTANCE / FIELD_SECTION_SUBDIVISION.tot);
+    var iFoodsForSection = Math.floor(
+      MAX_FOODS_INSTANCE / FIELD_SECTION_SUBDIVISION.tot
+    );
     var aSections = s_oManageSections.getSections();
     for (var i = 0; i < aSections.length; i++) {
       for (var j = 0; j < iFoodsForSection; j++) {
@@ -44,8 +46,12 @@ function CManageFoods(oParentContainer) {
     var iRandType = Math.floor(Math.random() * _aFoodsOccurrence.length);
     var iXRand;
     var iYRand;
-    var oSprite = s_oSpriteLibrary.getSprite('food_' + _aFoodsOccurrence[iRandType]);
-    var iState = Math.floor(Math.random() * FOOD_STATE[_aFoodsOccurrence[iRandType]]);
+    var oSprite = s_oSpriteLibrary.getSprite(
+      'food_' + _aFoodsOccurrence[iRandType]
+    );
+    var iState = Math.floor(
+      Math.random() * FOOD_STATE[_aFoodsOccurrence[iRandType]]
+    );
 
     var iWidth = oSprite.width / 4;
     var iHeight = oSprite.height;
@@ -73,9 +79,14 @@ function CManageFoods(oParentContainer) {
             (oSection.getRect().y + iOffsetY)) +
         oSection.getRect().y +
         iOffsetY;
-      //console.log(k);
+
       for (var j = 0; j < _aFoods.length; j++) {
-        bCheckCol = this.checkCollisionFoodToObject(_aFoods[j], iWidth, iXRand, iYRand);
+        bCheckCol = this.checkCollisionFoodToObject(
+          _aFoods[j],
+          iWidth,
+          iXRand,
+          iYRand
+        );
         if (bCheckCol) {
           break;
         }
@@ -102,8 +113,6 @@ function CManageFoods(oParentContainer) {
       k++;
     }
 
-    //oPos1, oPos2, iDim1, iDim2
-    //        console.log(oSection.getRect());
     var oFood = new CFood(
       iXRand,
       iYRand,
@@ -114,7 +123,7 @@ function CManageFoods(oParentContainer) {
       _oContainer
     );
     oFood.changeState(iState);
-    _aFoods.push(oFood); //iXPos, iYPos, iRotation, iType, oSprite, oParentContainer
+    _aFoods.push(oFood);
     oSection.addFood(oFood);
 
     if (SHOW_FOODS_ID) {
@@ -142,7 +151,6 @@ function CManageFoods(oParentContainer) {
   };
 
   this.restoresEatenFood = function () {
-    //RESPAWN PER SEZIONE APPENA VEDE UNA SEZIONE IN CUI MANCA UN CIBO RIMETTERLO E FARE IL BREAK FARE SHUFFLE
     var aSection = s_oManageSections.getSections();
     var aShuffleSec = s_oManageSections.getSectionIDShuffle();
     for (var i = 0; i < aShuffleSec.length; i++) {
@@ -207,10 +215,14 @@ function CManageFoods(oParentContainer) {
             }
             k++;
           }
-          var iState = Math.floor(Math.random() * FOOD_STATE[aFoods[j].getType()]);
+          var iState = Math.floor(
+            Math.random() * FOOD_STATE[aFoods[j].getType()]
+          );
           aFoods[j].setPosition(iXRand, iYRand);
           aFoods[j].changeState(iState);
-          aFoods[j].spawnAnim(Math.floor(Math.random() * MAXT_TIME_WAIT_FOOD_SPAWN_ANIM));
+          aFoods[j].spawnAnim(
+            Math.floor(Math.random() * MAXT_TIME_WAIT_FOOD_SPAWN_ANIM)
+          );
           aFoods[j].setVisible(true);
           return;
         }
@@ -226,7 +238,9 @@ function CManageFoods(oParentContainer) {
         var k = 0;
         var iXRand;
         var iYRand;
-        var oSection = s_oManageSections.getSectionByID(_aFoods[i].getSectionID());
+        var oSection = s_oManageSections.getSectionByID(
+          _aFoods[i].getSectionID()
+        );
 
         var iOffsetX = _aFoods[i].getDim().w * 2;
         var iOffsetY = _aFoods[i].getDim().h * 2.2;
@@ -280,7 +294,9 @@ function CManageFoods(oParentContainer) {
           k++;
         }
         _aFoods[i].setPosition(iXRand, iYRand);
-        _aFoods[i].spawnAnim(Math.floor(Math.random() * MAXT_TIME_WAIT_FOOD_SPAWN_ANIM));
+        _aFoods[i].spawnAnim(
+          Math.floor(Math.random() * MAXT_TIME_WAIT_FOOD_SPAWN_ANIM)
+        );
         _aFoods[i].setVisible(true);
       }
     }

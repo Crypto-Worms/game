@@ -35,9 +35,9 @@ function CControlAiSnakes() {
     } else if (oInfo.result === AI_PLAYER && !s_oGame.getPlayerSnake().getEaten()) {
       this.setDirectionSnake(oSnake, oInfo, AI_PLAYER);
       oSnake.subAI.followTime();
-      oSnake.subAI.playSoundFollow();
+      // oSnake.subAI.playSoundFollow();
     } else {
-      oSnake.subAI.setSoundFollow(false);
+      // oSnake.subAI.setSoundFollow(false);
       oSnake.subAI.update();
     }
     oSnake.snake.update(SNAKES_AI_SPEED[oSnake.snake.getType()]);

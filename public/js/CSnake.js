@@ -1,4 +1,12 @@
-function CSnake(iX, iY, oSprite, iType, iStartQueueLenght, iID, oParentContainer) {
+function CSnake(
+  iX,
+  iY,
+  oSprite,
+  iType,
+  iStartQueueLenght,
+  iID,
+  oParentContainer
+) {
   var _oSnake;
   var _oCollision;
   var _oShape;
@@ -62,15 +70,25 @@ function CSnake(iX, iY, oSprite, iType, iStartQueueLenght, iID, oParentContainer
     }
 
     var oData = {
-      // image to use
       images: [oSprite],
-      // width, height & registration point of each sprite
-      frames: { width: iWidth, height: iHeight, regX: iWidth / 2, regY: iHeight / 2 },
+      frames: {
+        width: iWidth,
+        height: iHeight,
+        regX: iWidth / 2,
+        regY: iHeight / 2,
+      },
       animations: oAnimation,
     };
 
     var oSpriteSheet = new createjs.SpriteSheet(oData);
-    _oSnake = createSprite(oSpriteSheet, 'normal', iWidth / 2, iHeight / 2, iWidth, iHeight);
+    _oSnake = createSprite(
+      oSpriteSheet,
+      'normal',
+      iWidth / 2,
+      iHeight / 2,
+      iWidth,
+      iHeight
+    );
     _oSnake.gotoAndPlay('close');
 
     _oSnake.x = iX;
@@ -98,6 +116,60 @@ function CSnake(iX, iY, oSprite, iType, iStartQueueLenght, iID, oParentContainer
     }
 
     this.createCollision();
+  };
+
+  this.changeSnakeSprites = function () {
+    var iWidth;
+    var iHeight;
+    var oAnimation;
+
+    if (iType === 4) {
+      iWidth = oSprite.width / 9;
+      iHeight = oSprite.height / 2;
+      oAnimation = {
+        normal: 0,
+        open: [1, 7, 'remain_open'],
+        remain_open: 7,
+        close: [8, 12, 'normal'],
+        damage_open: [13, 16, 'remain_damage'],
+        remain_damage: [16, 16, 'damage_close', 0.05],
+        damage_close: {
+          frames: [16, 15, 14, 13],
+          next: 'normal',
+        },
+        die: 17,
+      };
+    } else {
+      iWidth = oSprite.width / 7;
+      iHeight = oSprite.height / 2;
+      oAnimation = {
+        normal: 0,
+        open: [1, 7, 'remain_open'],
+        remain_open: 7,
+        close: [8, 12, 'normal'],
+      };
+    }
+
+    const oSpriteBoost = isBoost
+      ? s_oSpriteLibrary.getSprite('snake_boost_head_' + iType)
+      : s_oSpriteLibrary.getSprite('snake_head_' + iType);
+
+    var oData = {
+      images: [oSpriteBoost],
+      frames: {
+        width: iWidth,
+        height: iHeight,
+        regX: iWidth / 2,
+        regY: iHeight / 2,
+      },
+      animations: oAnimation,
+    };
+
+    var oSpriteSheet = new createjs.SpriteSheet(oData);
+
+    _oSnake.spriteSheet = oSpriteSheet;
+
+    _aQueue.forEach(queue => queue.changeParts(iType));
   };
 
   this.getCurrentAnimation = function () {
@@ -131,7 +203,12 @@ function CSnake(iX, iY, oSprite, iType, iStartQueueLenght, iID, oParentContainer
       _oShape = new createjs.Shape();
       _oShape.graphics
         .beginFill('#00ff00')
-        .drawRect(_oRectangle.x, _oRectangle.y, _oRectangle.width, _oRectangle.height);
+        .drawRect(
+          _oRectangle.x,
+          _oRectangle.y,
+          _oRectangle.width,
+          _oRectangle.height
+        );
       _oShape.alpha = 0.5;
       _oParentContainer.addChild(_oShape);
     }
@@ -142,8 +219,9 @@ function CSnake(iX, iY, oSprite, iType, iStartQueueLenght, iID, oParentContainer
     _oSnake.y += _vDir.getY() * HERO_SPEED;
 
     _vDir.setV(reflectVectorV2(_vDir, vNormal));
-    //_vDir.normalize();
-    _oSnake.rotation = Math.atan2(_vDir.getY(), _vDir.getX()) * (180 / Math.PI) - 90;
+    // _vDir.normalize();
+    _oSnake.rotation =
+      Math.atan2(_vDir.getY(), _vDir.getX()) * (180 / Math.PI) - 90;
   };
 
   this.changeState = function (szState) {
@@ -183,34 +261,6 @@ function CSnake(iX, iY, oSprite, iType, iStartQueueLenght, iID, oParentContainer
     _aQueue.push(oQueue);
   };
 
-  this.eatingSound = function () {
-    if (_bEatingSoundPlayed) {
-      return;
-    }
-    var oSound = playSound('snake_eating', 1, false);
-
-    if (oSound !== null) {
-      oSound.on('end', function () {
-        _bEatingSoundPlayed = false;
-      });
-    }
-    _bEatingSoundPlayed = true;
-  };
-
-  this.screamingSound = function () {
-    if (_bScreamingSoundPlayed) {
-      return;
-    }
-
-    var oSound = playSound('scream', 1, false);
-    if (oSound !== null) {
-      oSound.on('end', function () {
-        _bScreamingSoundPlayed = false;
-      });
-    }
-    _bScreamingSoundPlayed = true;
-  };
-
   this.eatenEffect = function () {
     var iTime = EATEN_FOOD_SNAKE_INTERVAL;
     for (var i = 4; i < _aQueue.length; i++) {
@@ -225,12 +275,13 @@ function CSnake(iX, iY, oSprite, iType, iStartQueueLenght, iID, oParentContainer
   };
 
   this.queuePosition = function () {
-    //        var iDirX = _vDir.getX() * DISTANCE_SINGLE_QUEUE;
-    //        var iDirY = _vDir.getY() * DISTANCE_SINGLE_QUEUE;
     _aQueue[0].setPosition(_oSnake.x, _oSnake.y);
     _aQueue[0].setRotation(_oSnake.rotation);
     for (var i = _aQueue.length - 1; i > 0; i--) {
-      _aQueue[i].setPosition(_aQueue[i - 1].getLastPos().x, _aQueue[i - 1].getLastPos().y);
+      _aQueue[i].setPosition(
+        _aQueue[i - 1].getLastPos().x,
+        _aQueue[i - 1].getLastPos().y
+      );
       _aQueue[i].setRotation(_aQueue[i - 1].getRotation());
     }
   };
@@ -251,14 +302,7 @@ function CSnake(iX, iY, oSprite, iType, iStartQueueLenght, iID, oParentContainer
     _bDie = true;
     _vDir.set(0, 0);
     this.stopState('die');
-    //        this.cutQueueAtPoint(0);
-    //        var oScope = this;
-    //        createjs.Tween.get(_oSnake).wait(750).to({scaleX: 0, scaleY: 0}, 1000).call(function () {
-    //            oScope.unload();
-    //            if (oFunc !== "undefined") {
-    //                oFunc(_iID);
-    //            }
-    //        });
+    this.cutQueueAtPoint(0);
   };
 
   this.getOpenMounthDim = function () {
@@ -338,7 +382,6 @@ function CSnake(iX, iY, oSprite, iType, iStartQueueLenght, iID, oParentContainer
       Math.sin(-_oSnake.rotation * (Math.PI / 180)),
       Math.cos(-_oSnake.rotation * (Math.PI / 180))
     );
-    // console.log(_oSnake.rotation + " " + _vDir.toString());
   };
 
   this.rotate = function (fValue) {
@@ -401,7 +444,12 @@ function CSnake(iX, iY, oSprite, iType, iStartQueueLenght, iID, oParentContainer
       _oShape = new createjs.Shape();
       _oShape.graphics
         .beginFill('#00ff00')
-        .drawRect(_oRectangle.x, _oRectangle.y, _oRectangle.width, _oRectangle.height);
+        .drawRect(
+          _oRectangle.x,
+          _oRectangle.y,
+          _oRectangle.width,
+          _oRectangle.height
+        );
       _oShape.alpha = 0.5;
       _oParentContainer.addChild(_oShape);
     }

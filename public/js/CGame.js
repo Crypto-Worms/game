@@ -12,7 +12,6 @@ function CGame(oData) {
   var _oContainerEdges;
   var _bStartGame = false;
   var _bKeyDown = false;
-  var _iScore;
   var _iGameState = STATE_INIT;
   var _iSection;
   var _iVelocityStep;
@@ -25,6 +24,8 @@ function CGame(oData) {
   var _oHitArea;
   var _oListenerMouseDown;
   var _oListenerMouseUp;
+  var _boostButton;
+  var _boostInterval;
 
   this._init = function () {
     _oContainerEdges = new createjs.Container();
@@ -37,8 +38,6 @@ function CGame(oData) {
 
     _aSnakes = new Array();
     _aEnemySnakes = new Array();
-
-    setVolume('soundtrack', 0.4);
 
     _iVelocityStep = 0;
 
@@ -57,10 +56,11 @@ function CGame(oData) {
     _iPlayerSpeed = HERO_SPEED;
 
     this.createPlayerSnake();
-    _iBestScore = window.gameData;
-    _iScore = 0;
+    _iBestScore = window.gameData.score;
 
     this.resetCameraOnPlayer();
+
+    this.setBoostButton();
 
     _pStartScroll = {
       xMax: SCROLL_LIMIT.xMax,
@@ -81,11 +81,12 @@ function CGame(oData) {
     }
 
     _oInterface = new CInterface();
-    // _oInterface.refreshScore(_iScore);
     _oInterface.refreshBestScore(_iBestScore, false);
 
     _oFade = new createjs.Shape();
-    _oFade.graphics.beginFill('black').drawRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    _oFade.graphics
+      .beginFill('black')
+      .drawRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     s_oStage.addChild(_oFade);
 
@@ -107,12 +108,14 @@ function CGame(oData) {
 
   this.unload = function () {
     _bStartGame = false;
-    stopSound('soundtrack');
 
     if (s_bMobile) {
       _oHitArea.off('mousedown', _oListenerMouseDown);
       _oHitArea.off('pressup', _oListenerMouseUp);
     }
+
+    _boostButton.remove();
+    _boostButton = null;
 
     s_oStage.removeAllChildren();
     createjs.Tween.removeAllTweens();
@@ -159,7 +162,9 @@ function CGame(oData) {
 
   this.createControl = function () {
     _oHitArea = new createjs.Shape();
-    _oHitArea.graphics.beginFill('rgba(255,0,0,0.01)').drawRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    _oHitArea.graphics
+      .beginFill('rgba(255,0,0,0.01)')
+      .drawRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     s_oStage.addChild(_oHitArea);
 
     _oListenerMouseDown = _oHitArea.on('mousedown', this.onPressStart);
@@ -198,7 +203,6 @@ function CGame(oData) {
 
     this.scrollStage(_oPlayerSnake, _iPlayerSpeed);
 
-    //  this.resetCameraOnPlayer();
     _fLerpCamera = 0.1;
     createjs.Tween.get(this)
       .wait(750)
@@ -209,10 +213,11 @@ function CGame(oData) {
     this.addEnemySnakes();
 
     _iScore = _oPlayerSnake.getLengthQueue();
-    // _oInterface.refreshScore(_iScore);
 
-    playExistingSound('soundtrack');
-    s_oScrollStage.setChildIndex(_oContainerEdges, s_oScrollStage.numChildren - 1);
+    s_oScrollStage.setChildIndex(
+      _oContainerEdges,
+      s_oScrollStage.numChildren - 1
+    );
 
     _oFoods.restoresAllEatenFood();
     _iGameState = STATE_PLAY;
@@ -251,15 +256,12 @@ function CGame(oData) {
     }
 
     switch (evt.keyCode) {
-      // left
       case 37:
         s_oGame.onLeft();
         break;
-      // right
       case 39:
         s_oGame.onRight();
         break;
-      //up
       case 38:
         s_oGame.onKeyDownUp();
         break;
@@ -318,14 +320,8 @@ function CGame(oData) {
         s_oGame.unload();
         $(s_oMain).trigger('end_session');
 
-        playExistingSound('soundtrack');
-        setVolume('soundtrack', 1);
         s_oMain.gotoMenu();
       });
-  };
-
-  this._onExitHelp = function () {
-    _oInterface.onExitFromHelp();
   };
 
   this.updateScrollLimit = function (iNewX, iNewY) {
@@ -401,7 +397,9 @@ function CGame(oData) {
     ) {
       _bKeyDown = false;
       oPlayerSnake.die();
-      createjs.Tween.get(this).wait(MS_TIME_SHOW_WIN_PANEL).call(this.onDiePlayerSnake);
+      createjs.Tween.get(this)
+        .wait(MS_TIME_SHOW_WIN_PANEL)
+        .call(this.onDiePlayerSnake);
     }
   };
 
@@ -429,11 +427,12 @@ function CGame(oData) {
         }
         oSnake2
           .getSubAI()
-          .setFollowTime(oSnake2.getSubAI().getFollowTime() - MS_DECREASE_TIME_EATEN_QUEUE);
-        oSnake1.screamingSound();
+          .setFollowTime(
+            oSnake2.getSubAI().getFollowTime() - MS_DECREASE_TIME_EATEN_QUEUE
+          );
+
         this.snakeCloseMounthAnim(oSnake2);
         _iScore = oSnake1.getLengthQueue();
-        // _oInterface.refreshScore(_iScore);
         break;
       }
     }
@@ -465,14 +464,16 @@ function CGame(oData) {
   this.snakeEatenFood = function (oSnake, oFood) {
     if (oSnake.getType() === PLAYER) {
       this.updateScoreFood();
-      oSnake.eatingSound();
     }
     oSnake.setTarget({ result: false });
     oFood.setEaten(true);
     oFood.eatenAnim(oSnake.getPos());
     oSnake.eatenEffect();
     for (var i = 0; i < _aEnemySnakes.length; i++) {
-      if (oSnake.getType() === ENEMY_SNAKES[i] && oSnake.getLengthQueue() >= MAX_AI_QUEUE_LENGTH) {
+      if (
+        oSnake.getType() === ENEMY_SNAKES[i] &&
+        oSnake.getLengthQueue() >= MAX_AI_QUEUE_LENGTH
+      ) {
         return;
       }
     }
@@ -480,7 +481,9 @@ function CGame(oData) {
 
   this.snakeFoodsCollision = function () {
     for (var i = 0; i < _aSnakes.length; i++) {
-      var aFoods = _oSection.getSectionByID(_aSnakes[i].getSectionID()).getFoodsSection();
+      var aFoods = _oSection
+        .getSectionByID(_aSnakes[i].getSectionID())
+        .getFoodsSection();
       for (var j = 0; j < aFoods.length; j++) {
         this.snakeOpenMounth(_aSnakes[i], aFoods[j]);
         if (!aFoods[j].getEaten()) {
@@ -555,8 +558,11 @@ function CGame(oData) {
   };
 
   this.onDiePlayerSnake = function () {
-    stopSound('soundtrack');
     _oInterface.createEndPanel(_iBestScore);
+    isBoost = false;
+    _oBg._changeBackground();
+    _oPlayerSnake.changeSnakeSprites();
+    _aEnemySnakes.forEach(enemy => enemy.changeSnakeSprites());
   };
 
   this.onDieEnemySnake = function (iID) {
@@ -565,10 +571,9 @@ function CGame(oData) {
   };
 
   this.updateScoreFood = async function () {
-    _iScore++;
-    // _oInterface.refreshScore(_iScore);
-    await setUserScore();
-    _iBestScore = window.gameData;
+    window.gameData.score = await setUserScore();
+    _iBestScore = window.gameData?.score || 0;
+
     _oInterface.refreshBestScore(_iBestScore, true);
   };
 
@@ -590,12 +595,101 @@ function CGame(oData) {
     }
   };
 
+  this.activateBoost = function () {};
+
+  this.setBoostButton = async function () {
+    var boostCount = await window.gameData?.daily_boost_count;
+
+    _boostButton = document.createElement('div');
+    _boostButton.classList.add('boost-button');
+    _boostButton.innerHTML = `
+      <div class="boost-count-wrapper">
+        <div class="boost-count">${boostCount}</div>
+      </div>
+      <div class="boost-icon"></div>
+      <div class="boost-countdown" style="display: none;"></div>
+    `;
+
+    _boostButton.addEventListener('click', async event => {
+      if (event.currentTarget.classList.contains('disable')) return;
+      if (event.currentTarget.classList.contains('active')) return;
+
+      let { boost_count } = await activateBoost();
+
+      window.gameData.daily_boost_count = await boost_count;
+
+      _boostButton.querySelector('.boost-count').innerText = boost_count;
+
+      var countdown = 15;
+      var countdownElement = document.querySelector('.boost-countdown');
+      var boostIcon = document.querySelector('.boost-icon');
+
+      if (_boostInterval) {
+        clearTimeout(_boostInterval);
+      }
+
+      boostIcon.style.display = 'none';
+      countdownElement.style.display = 'flex';
+      countdownElement.innerText = countdown;
+
+      _boostButton.classList.add('active');
+
+      var countdownInterval = setInterval(function () {
+        countdown -= 1;
+        countdownElement.innerText = countdown;
+
+        if (!isBoost) {
+          clearTimeout(countdownInterval);
+          clearInterval(_boostInterval);
+          countdownElement.style.display = 'none';
+          boostIcon.style.display = 'block';
+          _boostButton.classList.remove('active');
+          _boostInterval = null;
+          if (window.gameData.daily_boost_count < 1) {
+            _boostButton.classList.add('disable');
+          }
+        }
+
+        if (countdown <= 0) {
+          countdownElement.style.display = 'none';
+          boostIcon.style.display = 'block';
+        }
+      }, 1000);
+
+      isBoost = true;
+      _oBg._changeBackground();
+      _oPlayerSnake.changeSnakeSprites();
+      _aEnemySnakes.forEach(enemy => enemy.changeSnakeSprites());
+
+      _boostInterval = setTimeout(() => {
+        clearTimeout(countdownInterval);
+        clearInterval(_boostInterval);
+        if (window.gameData.daily_boost_count < 1) {
+          _boostButton.classList.add('disable');
+        }
+        _boostButton.classList.remove('active');
+
+        countdownElement.style.display = 'none';
+        isBoost = false;
+
+        _oBg._changeBackground();
+        _oPlayerSnake.changeSnakeSprites();
+        _aEnemySnakes.forEach(enemy => enemy.changeSnakeSprites());
+
+        _boostInterval = null;
+      }, 15000);
+    });
+
+    document.body.appendChild(_boostButton);
+
+    if (window.gameData.daily_boost_count < 1) {
+      _boostButton.classList.add('disable');
+    }
+  };
+
   this.update = function () {
     switch (_iGameState) {
       case STATE_INIT:
-        // if (s_oHelp !== null) {
-        //   s_oHelp.update();
-        // }
         _bStartGame = true;
 
         _iGameState = STATE_PLAY;
@@ -604,6 +698,7 @@ function CGame(oData) {
         break;
       case STATE_PLAY:
         this._updatePlay();
+
         break;
       case STATE_FINISH:
         break;

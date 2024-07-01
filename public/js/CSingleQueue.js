@@ -6,12 +6,12 @@ function CSingleQueue(iXPos, iYPos, iRotation, iType, oParentContainer) {
   var _oTimeline;
 
   this._init = function (iXPos, iYPos, iType, iRotation) {
-    var oSprite = s_oSpriteLibrary.getSprite('snake_parts_' + iType);
+    var oSprite = isBoost
+      ? s_oSpriteLibrary.getSprite('snake_boost_parts_' + iType)
+      : s_oSpriteLibrary.getSprite('snake_parts_' + iType);
 
     var oData = {
-      // image to use
       images: [oSprite],
-      // width, height & registration point of each sprite
       frames: {
         width: oSprite.width / 2,
         height: oSprite.height,
@@ -52,9 +52,42 @@ function CSingleQueue(iXPos, iYPos, iRotation, iType, oParentContainer) {
       createjs.Tween.get(_oSprite)
         .to({ scaleX: 1.2 }, TIME_EATEN_EFFECT, createjs.Ease.cubicOut)
         .call(function () {
-          createjs.Tween.get(_oSprite).to({ scaleX: 1 }, TIME_EATEN_EFFECT, createjs.Ease.cubicIn);
+          createjs.Tween.get(_oSprite).to(
+            { scaleX: 1 },
+            TIME_EATEN_EFFECT,
+            createjs.Ease.cubicIn
+          );
         })
     );
+  };
+
+  this.changeParts = function (iType) {
+    var oBoostSprite = isBoost
+      ? s_oSpriteLibrary.getSprite('snake_boost_parts_' + iType)
+      : s_oSpriteLibrary.getSprite('snake_parts_' + iType);
+
+    var oData = {
+      images: [oBoostSprite],
+      frames: {
+        width: oBoostSprite.width / 2,
+        height: oBoostSprite.height,
+        regX: oBoostSprite.width / 2 / 2,
+        regY: oBoostSprite.height / 2,
+      },
+      animations: { body: 0, queue: 1 },
+    };
+
+    var oSpriteBoostSheet = new createjs.SpriteSheet(oData);
+    _oSpriteBoost = createSprite(
+      oSpriteBoostSheet,
+      'queue',
+      oBoostSprite.width / 2 / 2,
+      oBoostSprite.height / 2,
+      oBoostSprite.width / 2,
+      oBoostSprite.height
+    );
+
+    _oSprite.spriteSheet = oSpriteBoostSheet;
   };
 
   this.changeState = function (szState) {

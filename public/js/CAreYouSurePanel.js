@@ -86,16 +86,8 @@ function CAreYouSurePanel(oParentContainer) {
     this.unload();
     s_oGame.onExit();
     _oFade.removeAllEventListeners();
-    console.log();
-    // fetch('/update-score', {
-    //   method: 'POST',
-    //   body: JSON.stringify({ user: app.initData, score: window.gamedata.score }),
-    // })
-    //   .then(response => response.json())
-    //   .then(data => console.log(data))
-    //   .catch(error => console.error('There was an error:', error));
 
-    app.close();
+    // app.close();
   };
 
   this._onButNo = function () {

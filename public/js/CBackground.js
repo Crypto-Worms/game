@@ -3,6 +3,21 @@ function CBackground(oParenctContainer) {
   var _oContainer;
   var _oBgTiling;
 
+  this._changeBackground = function () {
+    var gameBgSprite = isBoost ? 'bg_game_boost' : 'bg_game';
+
+    var matTiling = new createjs.Matrix2D();
+    matTiling.a = matTiling.d = 1;
+    _oBgTiling.graphics.clear();
+    _oBgTiling.graphics
+      .beginBitmapFill(
+        s_oSpriteLibrary.getSprite(gameBgSprite),
+        'repeat',
+        matTiling
+      )
+      .drawRect(0, 0, 3072, 2048);
+  };
+
   this._init = function () {
     _oContainer = new createjs.Container();
     _oContainer.tickChildren = false;
@@ -14,7 +29,11 @@ function CBackground(oParenctContainer) {
 
     _oBgTiling = new createjs.Shape();
     _oBgTiling.graphics
-      .beginBitmapFill(s_oSpriteLibrary.getSprite('bg_game'), 'repeat', matTiling)
+      .beginBitmapFill(
+        s_oSpriteLibrary.getSprite('bg_game'),
+        'repeat',
+        matTiling
+      )
       .drawRect(0, 0, 3072, 2048);
     _oBgTiling.y = 0;
     _oBgTiling.alpha = 1;

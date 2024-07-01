@@ -12,7 +12,7 @@ var EDGEBOARD_X = 175;
 var EDGEBOARD_Y = 90;
 
 var DISABLE_SOUND_MOBILE = true;
-var FONT_GAME = 'palamecia_titlingregular';
+var FONT_GAME = 'Titan One';
 
 var FPS = 30;
 
@@ -175,3 +175,5 @@ var HERO_ACCELLERATION;
 var MAX_HERO_SPEED;
 var ENABLE_FULLSCREEN;
 var ENABLE_CHECK_ORIENTATION;
+
+var isBoost = false;

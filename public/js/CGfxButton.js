@@ -80,7 +80,7 @@ function CGfxButton(iXPos, iYPos, oSprite, oParentContainer) {
     }
     _oButton.scaleY = _fScaleY;
 
-    playSound('click', 1, false);
+    // playSound('click', 1, false);
 
     if (_aCbCompleted[ON_MOUSE_UP]) {
       _aCbCompleted[ON_MOUSE_UP].call(_aCbOwner[ON_MOUSE_UP], _aParams[ON_MOUSE_UP]);

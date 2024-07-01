@@ -48,18 +48,18 @@ function CSubAISnake(oSnake, iTimeFollow) {
     return _iTimeFollow;
   };
 
-  this.playSoundFollow = function () {
-    if (_bSoundFollowPlayed) {
-      return;
-    }
-    _bSoundFollowPlayed = true;
+  // this.playSoundFollow = function () {
+  //   if (_bSoundFollowPlayed) {
+  //     return;
+  //   }
+  //   _bSoundFollowPlayed = true;
 
-    playSound('snake_follow', 1, false);
-  };
+  //   playSound('snake_follow', 1, false);
+  // };
 
-  this.setSoundFollow = function (bVal) {
-    _bSoundFollowPlayed = bVal;
-  };
+  // this.setSoundFollow = function (bVal) {
+  //   _bSoundFollowPlayed = bVal;
+  // };
 
   this.ignorePlayerTime = function () {
     if (_bIgnorePlayer) {

@@ -1,4 +1,12 @@
-function CFood(iXPos, iYPos, iRotation, iType, iSection, oSprite, oParentContainer) {
+function CFood(
+  iXPos,
+  iYPos,
+  iRotation,
+  iType,
+  iSection,
+  oSprite,
+  oParentContainer
+) {
   var _oFood;
   var _oParentContainer = oParentContainer;
   var _oDim;
@@ -9,25 +17,23 @@ function CFood(iXPos, iYPos, iRotation, iType, iSection, oSprite, oParentContain
 
   this._init = function (iXPos, iYPos, iType, oSprite, iRotation) {
     var oData = {
-      // image to use
       images: [oSprite],
-      // width, height & registration point of each sprite
       frames: {
-        width: oSprite.width / 4,
+        width: oSprite.width / 2,
         height: oSprite.height,
-        regX: oSprite.width / 4 / 2,
+        regX: oSprite.width / 2,
         regY: oSprite.height / 2,
       },
-      animations: { apple: 0, orange: 1, cherry: 2, pear: 3 },
+      animations: { apple: 0, orange: 1 },
     };
 
     var oSpriteSheet = new createjs.SpriteSheet(oData);
     _oFood = createSprite(
       oSpriteSheet,
       0,
-      oSprite.width / 4 / 2,
+      oSprite.width / 2,
       oSprite.height / 2,
-      oSprite.width / 4,
+      oSprite.width / 2,
       oSprite.height
     );
     _oFood.stop();
@@ -36,7 +42,7 @@ function CFood(iXPos, iYPos, iRotation, iType, iSection, oSprite, oParentContain
     _oFood.regY += REG_FOOD_OFFSET[iType].y;
 
     _oDim = {
-      w: oSprite.width / 4 + COLLISION_OFFSET_FOOD[iType].x,
+      w: oSprite.width / 2 + COLLISION_OFFSET_FOOD[iType].x,
       h: oSprite.height + COLLISION_OFFSET_FOOD[iType].y,
     };
 
@@ -86,8 +92,6 @@ function CFood(iXPos, iYPos, iRotation, iType, iSection, oSprite, oParentContain
 
   this.createTextID = function (iID) {
     _oText = new createjs.Text(iID, '20px ' + FONT_GAME, '#ffffff');
-    //        oText.regX = _oDim.w * 0.5;
-    //        oText.regY = _oDim.h * 0.5;
     _oText.textAlign = 'center';
     _oText.textBaseline = 'middle';
     _oText.x = _oFood.x;
@@ -97,7 +101,11 @@ function CFood(iXPos, iYPos, iRotation, iType, iSection, oSprite, oParentContain
 
   this.eatenAnim = function (oPos) {
     createjs.Tween.get(_oFood)
-      .to({ x: oPos.x, y: oPos.y, scaleX: 1, scaleY: 1 }, 100, createjs.Ease.cubicIn)
+      .to(
+        { x: oPos.x, y: oPos.y, scaleX: 1, scaleY: 1 },
+        100,
+        createjs.Ease.cubicIn
+      )
       .set({ visible: false, scaleX: 1, scaleY: 1 });
   };
 
@@ -134,7 +142,11 @@ function CFood(iXPos, iYPos, iRotation, iType, iSection, oSprite, oParentContain
     _oFood.scaleX = _oFood.scaleY = 0;
     createjs.Tween.get(_oFood)
       .wait(iWaitTime)
-      .to({ scaleX: 1, scaleY: 1 }, TIME_FOOD_SPAWN_ANIM, createjs.Ease.elasticOut);
+      .to(
+        { scaleX: 1, scaleY: 1 },
+        TIME_FOOD_SPAWN_ANIM,
+        createjs.Ease.elasticOut
+      );
   };
 
   this.setPosition = function (iX, iY) {

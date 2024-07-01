@@ -1,0 +1,7 @@
+node_modules/*
+db/*
+.env
+.env.dev
+.env.prod
+package-lock.json
+tonconnect-manifest.json

@@ -7,17 +7,15 @@
       href="css/reset.css"
       type="text/css" />
     <link
+      preload
+      href="css/main.css"
+      as="style"
+      onload="this.rel='stylesheet'" />
+    <link
       rel="stylesheet"
       href="css/main.css"
       type="text/css" />
-    <link
-      rel="stylesheet"
-      href="css/orientation_utils.css"
-      type="text/css" />
-    <link
-      rel="stylesheet"
-      href="css/ios_fullscreen.css"
-      type="text/css" />
+
     <link
       rel="shortcut icon"
       type="image/x-icon"
@@ -32,11 +30,35 @@
     <meta
       name="msapplication-tap-highlight"
       content="no" />
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Titan+One&display=swap"
+      rel="stylesheet" />
+
+    <script src="https://unpkg.com/@tonconnect/ui@2.0.2/dist/tonconnect-ui.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-HKWTTQXMZQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+
+      gtag('config', 'G-HKWTTQXMZQ');
+    </script>
   </head>
-  <body
-    ondragstart="return false;"
-    ondrop="return false;">
+  <body style="overflow: hidden">
     <div
       style="
         position: fixed;
@@ -47,100 +69,28 @@
         height: 100%;
       "></div>
 
-    <div class="check-fonts">
-      <p class="check-font-1">palamecia_titlingregular</p>
-    </div>
     <div id="app"></div>
-    <!-- <canvas
-      id="canvas"
-      width="428"
-      height="926">
-    </canvas> -->
-    <!-- <div data-orientation="landscape" class="orientation-msg-container"><p class="orientation-msg-text">Please rotate your device</p></div> -->
-    <!-- <div
-      id="block_game"
-      style="
-        position: fixed;
-        background-color: transparent;
-        top: 0px;
-        left: 0px;
-        width: 100%;
-        height: 100%;
-        display: none;
-      "></div> -->
+
     <div
       id="ton-connect"
       style="
         z-index: 999;
         position: absolute;
-        top: 7vw;
+        bottom: 50vw;
         margin: auto;
         left: 50%;
         display: none;
         transform: translateX(-50%);
       "></div>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="/web-app.js"></script>
-    <script>
-      const app = window.Telegram.WebApp;
-      app.ready();
-      app.expand();
-    </script>
 
-    <script>
-      const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-        manifestUrl: 'https://cryptoworms.online/tonconnect-manifest.json',
-        buttonRootId: 'ton-connect',
-      });
-
-      tonConnectUI.uiOptions = {
-        twaReturnUrl: 'https://cryptoworms.online/',
-      };
-      async function connectToWallet() {
-        if (tonConnectUI.connected) {
-          console.log('Already connected to tonConnect UI');
-
-          const connectedData = await tonConnectUI.connector._wallet.account.address;
-          fetch('/assignWalletAddress', {
-            method: 'POST',
-            body: JSON.stringify({
-              address: connectedData,
-              user_id: app.initDataUnsafe.user.id,
-            }),
-          });
-          return;
-        }
-        const connectedWallet = await tonConnectUI.connectWallet();
-
-        fetch('/assignWalletAddress', {
-          method: 'POST',
-          body: JSON.stringify({
-            address: connectedWallet.account.address,
-            user_id: app.initDataUnsafe.user.id,
-          }),
-        });
-        console.log(connectedWallet);
-      }
-    </script>
+    <script src="/ton-connect.js?v3"></script>
+    <script src="/web-app.js?v2"></script>
 
     <script
       type="text/javascript"
       src="js/jquery-3.1.1.min.js"></script>
-    <script
-      type="text/javascript"
-      src="js/createjs.min.js"></script>
-    <script
-      type="text/javascript"
-      src="js/screenfull.js"></script>
-    <script
-      type="text/javascript"
-      src="js/howler.min.js"></script>
-    <script
-      type="text/javascript"
-      src="js/platform.js"></script>
-    <script
-      type="text/javascript"
-      src="js/ios_fullscreen.js"></script>
+    <script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>
     <script
       type="text/javascript"
       src="js/ctl_utils.js"></script>
@@ -158,7 +108,7 @@
       src="js/CPreloader.js"></script>
     <script
       type="text/javascript"
-      src="js/CMain.js"></script>
+      src="js/CMain.js?v2"></script>
     <script
       type="text/javascript"
       src="js/CTextButton.js"></script>
@@ -170,19 +120,13 @@
       src="js/CGfxButton.js"></script>
     <script
       type="text/javascript"
-      src="js/CCreditsPanel.js"></script>
-    <script
-      type="text/javascript"
-      src="js/CMenu.js"></script>
+      src="js/CMenu.js?v2"></script>
     <script
       type="text/javascript"
       src="js/CGame.js"></script>
     <script
       type="text/javascript"
       src="js/CInterface.js"></script>
-    <script
-      type="text/javascript"
-      src="js/CHelpPanel.js"></script>
     <script
       type="text/javascript"
       src="js/CEndPanel.js"></script>
@@ -234,23 +178,16 @@
     <script
       type="text/javascript"
       src="js/CLogo.js"></script>
-    <script
-      type="text/javascript"
-      src="js/CAnimHelp.js"></script>
 
     <script>
       $(document).ready(function () {
         var oMain = new CMain({
-          hero_rotation_speed: 10, //HERO ROTATION SPEED WHEN MOVING RIGHT/LEFT
-          hero_speed_up: 15, //SET THIS MAX HERO SPEED WHEN PRESS UP KEY
-          hero_speed: 10, //MAX HERO SPEED
+          hero_rotation_speed: 10,
+          hero_speed_up: 15,
+          hero_speed: 10,
           snakes_AI_speed: [10, 10, 10, 10],
-          food_score: [1], //ADD SCORE WHEN SNAKE EAT A FOOD BY TYPE
-          //   fullscreen: true, //SET THIS TO FALSE IF YOU DON'T WANT TO SHOW FULLSCREEN BUTTON
-          //   check_orientation: true, //SET TO FALSE IF YOU DON'T WANT TO SHOW ORIENTATION ALERT ON MOBILE DEVICES
+          food_score: [1],
         });
-
-        getUserScore();
 
         $(oMain).on('start_session', function (evt) {
           if (getParamValue('ctl-arcade') === 'true') {
@@ -281,37 +218,6 @@
             parent.__ctlArcadeEndLevel({ level: iLevel });
           }
         });
-
-        $(oMain).on('save_score', function (evt, iScore, szMode) {
-          if (getParamValue('ctl-arcade') === 'true') {
-            parent.__ctlArcadeSaveScore({ score: iScore, mode: szMode });
-          }
-        });
-
-        $(oMain).on('show_interlevel_ad', function (evt) {
-          if (getParamValue('ctl-arcade') === 'true') {
-            parent.__ctlArcadeShowInterlevelAD();
-          }
-        });
-
-        $(oMain).on('share_event', function (evt, iScore) {
-          if (getParamValue('ctl-arcade') === 'true') {
-            parent.__ctlArcadeShareEvent({
-              img: TEXT_SHARE_IMAGE,
-              title: TEXT_SHARE_TITLE,
-              msg: TEXT_SHARE_MSG1 + iScore + TEXT_SHARE_MSG2,
-              msg_share: TEXT_SHARE_SHARE1 + iScore + TEXT_SHARE_SHARE1,
-            });
-          }
-        });
-
-        if (isIOS()) {
-          setTimeout(function () {
-            sizeHandler();
-          }, 200);
-        } else {
-          sizeHandler();
-        }
       });
     </script>
   </body>
