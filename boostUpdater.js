@@ -43,14 +43,11 @@ function getEligibleUsers() {
 
     db.all(sqlSelect, [], (err, rows) => {
       if (err) {
-        console.error(
-          'Error getting users from the database:',
-          err
-        );
+        console.error('Error getting users from the database:', err);
         reject(err);
       } else {
-        console.log('Получены пользователи для обновления бустов:', rows);
-        
+        console.log('Users have been received to update the boosts:', rows);
+
         const updatePromises = rows.map(
           row =>
             new Promise((resolveUpdate, rejectUpdate) => {
@@ -80,7 +77,6 @@ function getEligibleUsers() {
     });
   });
 }
-
 
 const sendMessageQueue = [];
 const MESSAGE_SENDING_INTERVAL = 200;
